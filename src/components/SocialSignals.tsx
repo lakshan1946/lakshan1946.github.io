@@ -164,21 +164,17 @@ export function SocialSignals({
                             {postLabel}
                           </span>
                         )}
-                        <span
-                          className={cn(
-                            "rounded-full border px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.14em]",
-                            statusTone(profile.status),
-                          )}
-                        >
-                          {profile.status}
-                        </span>
+                        {profile.status === "live" && (
+                          <span
+                            className={cn(
+                              "rounded-full border px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.14em]",
+                              statusTone(profile.status),
+                            )}
+                          >
+                            Live
+                          </span>
+                        )}
                       </div>
-
-                      {profile.syncError && (
-                        <p className="mt-2 text-xs text-accent">
-                          {profile.syncError}
-                        </p>
-                      )}
                     </div>
                   </a>
                 </li>
