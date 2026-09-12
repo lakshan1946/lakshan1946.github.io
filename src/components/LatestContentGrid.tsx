@@ -1,14 +1,15 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import type { CreatorIdentity } from "@/content";
+import type { CreatorIdentity, SocialPlatform } from "@/content";
+import { PlatformIcon, platformLabel } from "@/components/PlatformIcon";
 import { SOCIAL_CACHE } from "@/lib/social/constants";
 
 type ContentItem = {
   id: string;
   title: string;
   url: string;
-  platform: string;
+  platform: SocialPlatform | string;
   identity: CreatorIdentity;
   thumbnailUrl?: string;
   publishedAt?: string;
@@ -19,6 +20,10 @@ async function fetchLatest(): Promise<ContentItem[]> {
   if (!res.ok) return [];
   const data = await res.json();
   return data.latestContent ?? [];
+}
+
+function isSocialPlatform(value: string): value is SocialPlatform {
+  return ["youtube", "instagram", "facebook", "tiktok"].includes(value);
 }
 
 export function LatestContentGrid({
@@ -49,7 +54,10 @@ export function LatestContentGrid({
   return (
     <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => (
-        <li key={item.id} className="overflow-hidden border border-border bg-surface">
+        <li
+          key={item.id}
+          className="overflow-hidden border border-border bg-surface"
+        >
           {item.thumbnailUrl && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -59,8 +67,15 @@ export function LatestContentGrid({
             />
           )}
           <div className="p-4">
-            <p className="text-xs uppercase tracking-[0.14em] text-muted">
-              {item.platform}
+            <p className="flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-muted">
+              {isSocialPlatform(item.platform) && (
+                <span className="text-foreground [&_svg]:h-3.5 [&_svg]:w-3.5">
+                  <PlatformIcon platform={item.platform} />
+                </span>
+              )}
+              {isSocialPlatform(item.platform)
+                ? platformLabel(item.platform)
+                : item.platform}
             </p>
             <a
               href={item.url}
