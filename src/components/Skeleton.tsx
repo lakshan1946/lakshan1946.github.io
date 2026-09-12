@@ -15,16 +15,12 @@ export function Skeleton({
 
 export function SocialProfileSkeleton() {
   return (
-    <div className="flex gap-4 border border-border bg-surface p-5">
+    <div className="flex h-full min-h-[7.25rem] items-center gap-4 border border-border bg-surface p-5">
       <Skeleton className="h-12 w-12 shrink-0 rounded-full" />
       <div className="min-w-0 flex-1 space-y-3">
-        <Skeleton className="h-3 w-40" />
-        <Skeleton className="h-5 w-48" />
-        <div className="flex gap-3 pt-1">
-          <Skeleton className="h-3 w-24" />
-          <Skeleton className="h-3 w-16" />
-          <Skeleton className="h-5 w-12 rounded-full" />
-        </div>
+        <Skeleton className="h-3 w-20" />
+        <Skeleton className="h-5 w-36" />
+        <Skeleton className="h-3 w-28" />
       </div>
     </div>
   );
