@@ -3,10 +3,10 @@
 import Link from "next/link";
 import {
   motion,
-  useMotionTemplate,
   useMotionValue,
   useReducedMotion,
   useSpring,
+  useTransform,
 } from "motion/react";
 import { usePathname } from "next/navigation";
 import { useRef, type PointerEvent } from "react";
@@ -45,15 +45,89 @@ const radialSlots: {
   },
 ];
 
-const springConfig = { stiffness: 160, damping: 24, mass: 0.5 };
+const springConfig = { stiffness: 90, damping: 28, mass: 0.55 };
+const angleSpringConfig = { stiffness: 70, damping: 22, mass: 0.5 };
 
-/** Ring radius as a fraction of half the stage size (matches inset %). */
-const OUTER_RING_RADIUS = 0.64; // inset 18%
-const INNER_RING_RADIUS = 0.36; // inset 32%
+/** Ring radius in a 100×100 viewBox (matches CSS inset %). */
+const OUTER_R = 32; // inset 18%
+const INNER_R = 18; // inset 32%
+const OUTER_RING_NORM = OUTER_R / 50;
+const INNER_RING_NORM = INNER_R / 50;
+const HIGHLIGHT_DEG = 48;
+
+function circumference(radius: number) {
+  return 2 * Math.PI * radius;
+}
+
+function arcLength(radius: number) {
+  return circumference(radius) * (HIGHLIGHT_DEG / 360);
+}
 
 function proximityToRing(normalizedDist: number, ringRadius: number): number {
-  const falloff = 0.28;
+  const falloff = 0.22;
   return Math.max(0, 1 - Math.abs(normalizedDist - ringRadius) / falloff);
+}
+
+/** Keep angle continuous so it never jumps the long way around the circle. */
+function unwrapDegrees(previous: number, next: number): number {
+  const prevNorm = ((previous % 360) + 360) % 360;
+  const nextNorm = ((next % 360) + 360) % 360;
+  let delta = nextNorm - prevNorm;
+  if (delta > 180) delta -= 360;
+  if (delta < -180) delta += 360;
+  return previous + delta;
+}
+
+function CursorRing({
+  radius,
+  dashed,
+  opacity,
+  dashOffset,
+  reduce,
+}: {
+  radius: number;
+  dashed?: boolean;
+  opacity: ReturnType<typeof useSpring>;
+  dashOffset: ReturnType<typeof useTransform> | ReturnType<typeof useSpring>;
+  reduce: boolean;
+}) {
+  const c = circumference(radius);
+  const arc = arcLength(radius);
+
+  return (
+    <motion.svg
+      aria-hidden
+      viewBox="0 0 100 100"
+      className="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible"
+      initial={reduce ? false : { opacity: 0, scale: 0.86 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <circle
+        cx="50"
+        cy="50"
+        r={radius}
+        fill="none"
+        stroke="var(--border)"
+        strokeWidth="0.4"
+        strokeDasharray={dashed ? "2.2 2.4" : undefined}
+        opacity={dashed ? 0.65 : 0.75}
+      />
+      {!reduce && (
+        <motion.circle
+          cx="50"
+          cy="50"
+          r={radius}
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth="0.65"
+          strokeLinecap="round"
+          strokeDasharray={`${arc} ${c - arc}`}
+          style={{ strokeDashoffset: dashOffset, opacity }}
+        />
+      )}
+    </motion.svg>
+  );
 }
 
 export function IdentityMap({
@@ -66,13 +140,29 @@ export function IdentityMap({
   const prefersReduced = useReducedMotion();
   const reduce = Boolean(prefersReduced || modeReduced);
   const stageRef = useRef<HTMLDivElement>(null);
+  const continuousAngleRef = useRef<number | null>(null);
 
-  const outerMix = useMotionValue(0);
-  const innerMix = useMotionValue(0);
-  const outerMixSpring = useSpring(outerMix, springConfig);
-  const innerMixSpring = useSpring(innerMix, springConfig);
-  const outerBorderColor = useMotionTemplate`color-mix(in srgb, var(--accent) ${outerMixSpring}%, var(--border))`;
-  const innerBorderColor = useMotionTemplate`color-mix(in srgb, var(--accent) ${innerMixSpring}%, var(--border))`;
+  const outerOpacity = useMotionValue(0);
+  const innerOpacity = useMotionValue(0);
+  const angleDegrees = useMotionValue(0);
+  const outerOpacitySpring = useSpring(outerOpacity, springConfig);
+  const innerOpacitySpring = useSpring(innerOpacity, springConfig);
+  const angleSpring = useSpring(angleDegrees, angleSpringConfig);
+
+  const outerC = circumference(OUTER_R);
+  const innerC = circumference(INNER_R);
+  const outerArc = arcLength(OUTER_R);
+  const innerArc = arcLength(INNER_R);
+
+  // Derive dash offsets from one continuous angle — no wrap jumps.
+  const outerOffsetSpring = useTransform(
+    angleSpring,
+    (deg) => -(deg / 360) * outerC + outerArc / 2,
+  );
+  const innerOffsetSpring = useTransform(
+    angleSpring,
+    (deg) => -(deg / 360) * innerC + innerArc / 2,
+  );
 
   const ordered = orderedDimensions
     .map((id) => dimensions.find((d) => d.id === id))
@@ -90,14 +180,22 @@ export function IdentityMap({
     const dy = event.clientY - (rect.top + rect.height / 2);
     const dist = Math.sqrt(dx * dx + dy * dy) / half;
 
-    // Rings tint toward accent when the cursor is near that ring.
-    outerMix.set(proximityToRing(dist, OUTER_RING_RADIUS) * 85);
-    innerMix.set(proximityToRing(dist, INNER_RING_RADIUS) * 85);
+    // SVG stroke starts at 3 o'clock; atan2 matches that (0 = right).
+    const rawDegrees = (Math.atan2(dy, dx) * 180) / Math.PI;
+    const previous = continuousAngleRef.current;
+    const smoothDegrees =
+      previous === null ? rawDegrees : unwrapDegrees(previous, rawDegrees);
+    continuousAngleRef.current = smoothDegrees;
+    angleDegrees.set(smoothDegrees);
+
+    outerOpacity.set(proximityToRing(dist, OUTER_RING_NORM));
+    innerOpacity.set(proximityToRing(dist, INNER_RING_NORM));
   }
 
   function handlePointerLeave() {
-    outerMix.set(0);
-    innerMix.set(0);
+    outerOpacity.set(0);
+    innerOpacity.set(0);
+    // Keep last angle so re-entry doesn't spin the wrong way.
   }
 
   return (
@@ -112,29 +210,18 @@ export function IdentityMap({
           onPointerMove={handlePointerMove}
           onPointerLeave={handlePointerLeave}
         >
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute inset-[18%] rounded-full border"
-            style={
-              reduce
-                ? { borderColor: "var(--border)" }
-                : { borderColor: outerBorderColor }
-            }
-            initial={reduce ? false : { opacity: 0, scale: 0.72 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          <CursorRing
+            radius={OUTER_R}
+            opacity={outerOpacitySpring}
+            dashOffset={outerOffsetSpring}
+            reduce={reduce}
           />
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute inset-[32%] rounded-full border border-dashed"
-            style={
-              reduce
-                ? { borderColor: "var(--border)" }
-                : { borderColor: innerBorderColor }
-            }
-            initial={reduce ? false : { opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          <CursorRing
+            radius={INNER_R}
+            dashed
+            opacity={innerOpacitySpring}
+            dashOffset={innerOffsetSpring}
+            reduce={reduce}
           />
 
           <motion.div
