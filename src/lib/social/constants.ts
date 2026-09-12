@@ -1,6 +1,6 @@
 /** Non-secret social integration constants. Secrets stay in env vars. */
 
-export const SOCIAL_LATEST_LIMIT = 4;
+export const SOCIAL_LATEST_LIMIT = 6;
 
 export const SOCIAL_CACHE = {
   /** Client TanStack Query stale time (ms). */
