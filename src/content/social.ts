@@ -1,7 +1,7 @@
 import { socialProfileSchema, type SocialProfile } from "./schemas";
 
 /**
- * PLACEHOLDER: Replace handles and URLs with real public profiles.
+ * Public social profiles by creator identity.
  * Live metrics come from /api/social when credentials are configured.
  */
 export const socialProfiles: SocialProfile[] = [
@@ -12,16 +12,6 @@ export const socialProfiles: SocialProfile[] = [
     handle: "@LakzJourney",
     profileUrl: "https://www.youtube.com/@LakzJourney",
     published: true,
-    placeholder: true,
-  }),
-  socialProfileSchema.parse({
-    id: "yt-lakshan",
-    platform: "youtube",
-    identity: "lakshanMadhusanka",
-    handle: "@LakshanMadhusanka",
-    profileUrl: "https://www.youtube.com/@LakshanMadhusanka",
-    published: true,
-    placeholder: true,
   }),
   socialProfileSchema.parse({
     id: "ig-lakzjourney",
@@ -30,16 +20,6 @@ export const socialProfiles: SocialProfile[] = [
     handle: "@lakzjourney",
     profileUrl: "https://www.instagram.com/lakzjourney",
     published: true,
-    placeholder: true,
-  }),
-  socialProfileSchema.parse({
-    id: "ig-lakshan",
-    platform: "instagram",
-    identity: "lakshanMadhusanka",
-    handle: "@lakshanmadhusanka",
-    profileUrl: "https://www.instagram.com/lakshanmadhusanka",
-    published: true,
-    placeholder: true,
   }),
   socialProfileSchema.parse({
     id: "fb-lakzjourney",
@@ -48,7 +28,6 @@ export const socialProfiles: SocialProfile[] = [
     handle: "LakzJourney",
     profileUrl: "https://www.facebook.com/LakzJourney",
     published: true,
-    placeholder: true,
   }),
   socialProfileSchema.parse({
     id: "tt-lakzjourney",
@@ -57,16 +36,38 @@ export const socialProfiles: SocialProfile[] = [
     handle: "@lakzjourney",
     profileUrl: "https://www.tiktok.com/@lakzjourney",
     published: true,
-    placeholder: true,
+  }),
+  socialProfileSchema.parse({
+    id: "yt-lakshan",
+    platform: "youtube",
+    identity: "lakshanMadhusanka",
+    handle: "@lakshanma21",
+    profileUrl: "https://www.youtube.com/@lakshanma21",
+    published: true,
+  }),
+  socialProfileSchema.parse({
+    id: "ig-lakshan",
+    platform: "instagram",
+    identity: "lakshanMadhusanka",
+    handle: "@lakshanma21",
+    profileUrl: "https://www.instagram.com/lakshanma21",
+    published: true,
+  }),
+  socialProfileSchema.parse({
+    id: "fb-lakshan",
+    platform: "facebook",
+    identity: "lakshanMadhusanka",
+    handle: "@lakshanma21",
+    profileUrl: "https://www.facebook.com/lakshanma21",
+    published: true,
   }),
   socialProfileSchema.parse({
     id: "tt-lakshan",
     platform: "tiktok",
     identity: "lakshanMadhusanka",
-    handle: "@lakshanmadhusanka",
-    profileUrl: "https://www.tiktok.com/@lakshanmadhusanka",
+    handle: "@lakshanma21",
+    profileUrl: "https://www.tiktok.com/@lakshanma21",
     published: true,
-    placeholder: true,
   }),
 ].filter((p) => p.published);
 

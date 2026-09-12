@@ -112,15 +112,19 @@ export function SocialSignals({
                             alt=""
                             className="h-12 w-12 rounded-full object-cover"
                           />
-                          <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-surface text-foreground">
-                            <span className="scale-75">
-                              <PlatformIcon platform={profile.platform} />
-                            </span>
+                          <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-surface">
+                            <PlatformIcon
+                              platform={profile.platform}
+                              className="h-3.5 w-3.5"
+                            />
                           </span>
                         </>
                       ) : (
-                        <span className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-background text-foreground">
-                          <PlatformIcon platform={profile.platform} />
+                        <span className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-background">
+                          <PlatformIcon
+                            platform={profile.platform}
+                            className="h-6 w-6"
+                          />
                         </span>
                       )}
                     </div>

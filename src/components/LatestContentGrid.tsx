@@ -112,8 +112,11 @@ export function LatestContentGrid({
             <div className="p-4">
               <p className="flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-muted">
                 {isSocialPlatform(item.platform) && (
-                  <span className="text-foreground [&_svg]:h-3.5 [&_svg]:w-3.5">
-                    <PlatformIcon platform={item.platform} />
+                  <span className="inline-flex">
+                    <PlatformIcon
+                      platform={item.platform}
+                      className="h-3.5 w-3.5"
+                    />
                   </span>
                 )}
                 {isSocialPlatform(item.platform)

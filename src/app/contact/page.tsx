@@ -14,7 +14,7 @@ export default function ContactPage() {
     <PageShell
       eyebrow="Reach out"
       title="CONTACT"
-      description="Professional contact and social presence — easy to find for recruiters and collaborators."
+      description="Professional links plus separate Lakshan and LakzJourney creator channels."
     >
       <ContactPanel />
     </PageShell>
