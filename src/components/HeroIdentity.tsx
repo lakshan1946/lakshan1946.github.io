@@ -36,7 +36,7 @@ export function HeroIdentity() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Link
           href={withMode("/build", mode)}
-          className="rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-opacity hover:opacity-90"
+          className="btn-primary rounded-full px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
         >
           Enter BUILD
         </Link>
