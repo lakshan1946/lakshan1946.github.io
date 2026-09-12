@@ -112,7 +112,7 @@ export function ContactPanel() {
       key: "linkedin",
       href: profile.links.linkedin,
       label: "LinkedIn",
-      detail: "Professional profile",
+      detail: "Career & network",
       icon: <ContactChannelIcon channel="linkedin" />,
       external: true,
     },
@@ -120,7 +120,7 @@ export function ContactPanel() {
       key: "github",
       href: profile.links.github,
       label: "GitHub",
-      detail: "Code & repositories",
+      detail: "Open-source & projects",
       icon: <ContactChannelIcon channel="github" />,
       external: true,
     },
@@ -141,9 +141,9 @@ export function ContactPanel() {
           Let&apos;s connect
         </h2>
         <p className="mt-4 text-muted md:text-lg">
-          Professional outreach sits apart from creator channels. Pick Lakshan
-          for engineering and education, or LakzJourney for lifestyle and
-          travel.
+          For roles, collaborations, and questions — start with email or
+          LinkedIn. Social profiles are split by identity so the right audience
+          finds the right channel.
         </p>
         <p className="mt-4 text-sm text-foreground/80">{profile.currentRole}</p>
       </div>
@@ -177,11 +177,11 @@ export function ContactPanel() {
       <div className="grid grid-rows-[auto_auto] gap-x-10 gap-y-12 border-t border-border pt-12 lg:grid-cols-2">
         <IdentityContactSection
           identity="lakshanMadhusanka"
-          description="Education, tech, and personal creator profiles — all under @lakshanma21."
+          description="Code, technology, and teaching — same handle on every platform."
         />
         <IdentityContactSection
           identity="lakzJourney"
-          description="Lifestyle, travel, and journey content across YouTube, Instagram, Facebook, and TikTok."
+          description="Travel, rides, reviews, and everyday adventures on the road."
         />
       </div>
     </div>

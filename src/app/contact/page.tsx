@@ -5,7 +5,7 @@ import { createMetadata } from "@/lib/seo";
 export const metadata = createMetadata({
   title: "CONTACT",
   description:
-    "Professional contact, social links, and ways to reach Lakshan Madhusanka.",
+    "Work contact via email and LinkedIn, plus Lakshan Madhusanka and LakzJourney social channels.",
   path: "/contact",
 });
 
@@ -14,7 +14,7 @@ export default function ContactPage() {
     <PageShell
       eyebrow="Reach out"
       title="CONTACT"
-      description="Professional links plus separate Lakshan and LakzJourney creator channels."
+      description="Work inquiries through professional channels. Creator content under two separate identities."
     >
       <ContactPanel />
     </PageShell>
