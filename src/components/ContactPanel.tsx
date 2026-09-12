@@ -135,29 +135,21 @@ export function ContactPanel() {
 
   return (
     <div className="space-y-14">
-      <div className="max-w-2xl border-b border-border pb-10">
-        <p className="identity-line text-accent">Availability</p>
-        <h2 className="mt-2 font-display text-3xl tracking-tight md:text-5xl">
-          Let&apos;s connect
-        </h2>
-        <p className="mt-4 text-muted md:text-lg">
-          For roles, collaborations, and questions — start with email or
-          LinkedIn. Social profiles are split by identity so the right audience
-          finds the right channel.
-        </p>
-        <p className="mt-4 text-sm text-foreground/80">{profile.currentRole}</p>
-      </div>
-
       <section aria-labelledby="professional-heading" className="space-y-4">
-        <div className="flex items-end justify-between gap-3">
-          <h3
-            id="professional-heading"
-            className="text-xs uppercase tracking-[0.16em] text-muted"
-          >
-            Professional
-          </h3>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h3
+              id="professional-heading"
+              className="text-xs uppercase tracking-[0.16em] text-muted"
+            >
+              Professional
+            </h3>
+            <p className="mt-2 text-sm text-foreground/80">
+              {profile.currentRole}
+            </p>
+          </div>
           <p className="text-[0.65rem] uppercase tracking-[0.14em] text-muted">
-            Recruiter path
+            Work & recruiting
           </p>
         </div>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
