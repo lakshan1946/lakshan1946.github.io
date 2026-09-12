@@ -130,42 +130,6 @@ async function fetchLongFormLatest(
   return items;
 }
 
-async function fetchSearchLatest(
-  identity: CreatorIdentity,
-  channelId: string,
-): Promise<SocialContentItem[]> {
-  const result = await youtubeGet("search", {
-    part: YOUTUBE.fields.search,
-    channelId,
-    order: "date",
-    maxResults: String(SOCIAL_LATEST_LIMIT),
-    type: "video",
-  });
-
-  if (!result.ok) {
-    console.error(
-      `[social] YouTube search failed for ${identity}:`,
-      result.error,
-    );
-    return [];
-  }
-
-  const data = result.data as {
-    items?: Array<{
-      id?: { videoId?: string };
-      snippet?: {
-        title?: string;
-        publishedAt?: string;
-        thumbnails?: { medium?: { url?: string } };
-      };
-    }>;
-  };
-
-  return (data.items ?? [])
-    .filter((item) => Boolean(item.id?.videoId))
-    .map((item) => toYouTubeItem(identity, item.id!.videoId!, item.snippet));
-}
-
 export async function fetchYouTubeEnrichment(
   profile: SocialProfile,
 ): Promise<ProfileEnrichment> {
@@ -208,10 +172,6 @@ export async function fetchYouTubeLatest(
   const channelId = channelIdFor(identity);
   if (!process.env.YOUTUBE_API_KEY || !channelId) return [];
 
-  // LakzJourney: long-form playlist only (avoids Shorts, including long Shorts).
-  if (identity === "lakzJourney") {
-    return fetchLongFormLatest(identity, channelId);
-  }
-
-  return fetchSearchLatest(identity, channelId);
+  // UULF… auto playlist = long-form uploads only (excludes Shorts).
+  return fetchLongFormLatest(identity, channelId);
 }

@@ -39,9 +39,6 @@ export function NowSnapshot({
           >
             <dt className="text-xs uppercase tracking-[0.16em] text-muted">
               {item.label}
-              {item.placeholder && (
-                <span className="placeholder-tag">Placeholder</span>
-              )}
             </dt>
             <dd className="mt-2 text-base leading-relaxed">{item.detail}</dd>
           </div>

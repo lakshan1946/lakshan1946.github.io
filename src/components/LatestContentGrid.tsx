@@ -42,9 +42,13 @@ function PlayIcon() {
 
 export function LatestContentGrid({
   identity,
+  platform,
+  limit = SOCIAL_LATEST_LIMIT,
   emptyMessage = "Latest content will appear here once social APIs are connected.",
 }: {
   identity?: CreatorIdentity;
+  platform?: SocialPlatform;
+  limit?: number;
   emptyMessage?: string;
 }) {
   const { data = [], isLoading } = useQuery({
@@ -53,19 +57,30 @@ export function LatestContentGrid({
     staleTime: SOCIAL_CACHE.clientStaleMs,
   });
 
-  const items = (identity
-    ? data.filter((item) => item.identity === identity)
-    : data
-  ).slice(0, SOCIAL_LATEST_LIMIT);
+  const items = data
+    .filter((item) => (identity ? item.identity === identity : true))
+    .filter((item) => (platform ? item.platform === platform : true))
+    .sort((a, b) => {
+      const aTime = a.publishedAt ? Date.parse(a.publishedAt) : 0;
+      const bTime = b.publishedAt ? Date.parse(b.publishedAt) : 0;
+      return bTime - aTime;
+    })
+    .slice(0, limit);
+
+  const skeletonCount = Math.min(limit, SOCIAL_LATEST_LIMIT);
+  const gridClass =
+    limit <= 4
+      ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+      : "grid gap-4 sm:grid-cols-2 lg:grid-cols-3";
 
   if (isLoading) {
     return (
       <ul
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        className={gridClass}
         aria-busy="true"
         aria-label="Loading latest content"
       >
-        {Array.from({ length: SOCIAL_LATEST_LIMIT }, (_, i) => (
+        {Array.from({ length: skeletonCount }, (_, i) => (
           <li key={`content-skel-${i}`}>
             <ContentCardSkeleton />
           </li>
@@ -79,7 +94,7 @@ export function LatestContentGrid({
   }
 
   return (
-    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className={gridClass}>
       {items.map((item) => (
         <li key={item.id}>
           <a
