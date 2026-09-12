@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { CreatorIdentity, SocialPlatform, SocialProfile } from "@/content";
 import { socialProfiles } from "@/content";
+import { SOCIAL_CACHE } from "@/lib/social/constants";
 import { formatDate } from "@/lib/utils";
 
 type SocialApiResponse = {
@@ -42,7 +43,7 @@ export function SocialSignals({
   const { data, isLoading, isError } = useQuery({
     queryKey: ["social"],
     queryFn: fetchSocial,
-    staleTime: 5 * 60 * 1000,
+    staleTime: SOCIAL_CACHE.clientStaleMs,
   });
 
   const profiles: SocialApiResponse["profiles"] =

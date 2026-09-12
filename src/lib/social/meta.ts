@@ -1,4 +1,5 @@
 import type { CreatorIdentity, SocialProfile } from "@/content";
+import { META, SOCIAL_LATEST_LIMIT, metaGraphUrl } from "./constants";
 import {
   fallbackEnrichment,
   liveEnrichment,
@@ -7,16 +8,11 @@ import {
   type SocialContentItem,
 } from "./types";
 
-const GRAPH_VERSION = "v21.0";
-const LATEST_LIMIT = "4";
-const INVALID_TOKEN_MESSAGE =
-  "META_ACCESS_TOKEN looks like an App ID. Use a long-lived Page access token (usually starts with EAA…).";
-
 /** Real tokens are long (often EAA…). Numeric App IDs are not access tokens. */
 function looksLikeAccessToken(token: string): boolean {
   const value = token.trim();
   if (/^\d+$/.test(value)) return false;
-  return value.length >= 40;
+  return value.length >= META.minAccessTokenLength;
 }
 
 function igUserIdFor(identity: CreatorIdentity): string | undefined {
@@ -38,15 +34,13 @@ async function metaGet(
 ): Promise<ApiResult> {
   const token = process.env.META_ACCESS_TOKEN?.trim();
   if (!token) {
-    return { ok: false, error: "META_ACCESS_TOKEN is not set" };
+    return { ok: false, error: META.errors.missingAccessToken };
   }
   if (!looksLikeAccessToken(token)) {
-    return { ok: false, error: INVALID_TOKEN_MESSAGE };
+    return { ok: false, error: META.errors.invalidAccessToken };
   }
 
-  const url = new URL(
-    `https://graph.facebook.com/${GRAPH_VERSION}/${path.replace(/^\//, "")}`,
-  );
+  const url = new URL(metaGraphUrl(path));
   for (const [key, value] of Object.entries(params)) {
     url.searchParams.set(key, value);
   }
@@ -65,7 +59,7 @@ async function metaGet(
   } catch (error) {
     return {
       ok: false,
-      error: error instanceof Error ? error.message : "Meta fetch failed",
+      error: error instanceof Error ? error.message : META.errors.fetchFailed,
     };
   }
 }
@@ -75,11 +69,11 @@ async function enrichInstagram(
 ): Promise<ProfileEnrichment> {
   const igUserId = igUserIdFor(identity);
   if (!igUserId) {
-    return fallbackEnrichment(`Missing META_IG_USER_ID for ${identity}`);
+    return fallbackEnrichment(META.errors.missingIgUserId(identity));
   }
 
   const result = await metaGet(igUserId, {
-    fields: "username,followers_count,media_count,profile_picture_url",
+    fields: META.fields.instagramUser,
   });
 
   if (!result.ok) {
@@ -108,11 +102,11 @@ async function enrichFacebook(
 ): Promise<ProfileEnrichment> {
   const pageId = fbPageIdFor(identity);
   if (!pageId) {
-    return fallbackEnrichment(`Missing META_FB_PAGE_ID for ${identity}`);
+    return fallbackEnrichment(META.errors.missingFbPageId(identity));
   }
 
   const result = await metaGet(pageId, {
-    fields: "name,fan_count,followers_count,link",
+    fields: META.fields.facebookPage,
   });
 
   if (!result.ok) {
@@ -140,7 +134,7 @@ export async function fetchMetaEnrichment(
   if (!token) return null;
 
   if (!looksLikeAccessToken(token)) {
-    return fallbackEnrichment(INVALID_TOKEN_MESSAGE);
+    return fallbackEnrichment(META.errors.invalidAccessToken);
   }
 
   if (profile.platform === "instagram") {
@@ -161,8 +155,8 @@ export async function fetchInstagramLatest(
   if (!process.env.META_ACCESS_TOKEN || !igUserId) return [];
 
   const result = await metaGet(`${igUserId}/media`, {
-    fields: "id,caption,media_type,permalink,thumbnail_url,media_url,timestamp",
-    limit: LATEST_LIMIT,
+    fields: META.fields.instagramMedia,
+    limit: String(SOCIAL_LATEST_LIMIT),
   });
 
   if (!result.ok) {
@@ -190,7 +184,10 @@ export async function fetchInstagramLatest(
       id: item.id!,
       platform: "instagram" as const,
       identity,
-      title: (item.caption ?? "Instagram post").slice(0, 120),
+      title: (item.caption ?? META.defaults.instagramPostTitle).slice(
+        0,
+        META.captionPreviewLength,
+      ),
       url: item.permalink!,
       thumbnailUrl: item.thumbnail_url ?? item.media_url,
       publishedAt: item.timestamp,

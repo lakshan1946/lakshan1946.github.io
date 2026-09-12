@@ -1,4 +1,5 @@
 import type { CreatorIdentity, SocialProfile } from "@/content";
+import { SOCIAL_LATEST_LIMIT, YOUTUBE } from "./constants";
 import {
   fallbackEnrichment,
   liveEnrichment,
@@ -6,8 +7,6 @@ import {
   type ProfileEnrichment,
   type SocialContentItem,
 } from "./types";
-
-const LATEST_LIMIT = "4";
 
 function channelIdFor(identity: CreatorIdentity): string | undefined {
   return identity === "lakzJourney"
@@ -21,11 +20,15 @@ function channelIdFor(identity: CreatorIdentity): string | undefined {
  */
 function autoPlaylistId(
   channelId: string,
-  kind: "long" | "shorts",
+  kind: keyof typeof YOUTUBE.playlistPrefix,
 ): string | null {
-  if (!channelId.startsWith("UC") || channelId.length < 3) return null;
-  const prefix = kind === "long" ? "UULF" : "UUSH";
-  return `${prefix}${channelId.slice(2)}`;
+  if (
+    !channelId.startsWith(YOUTUBE.channelIdPrefix) ||
+    channelId.length < 3
+  ) {
+    return null;
+  }
+  return `${YOUTUBE.playlistPrefix[kind]}${channelId.slice(2)}`;
 }
 
 async function youtubeGet(
@@ -34,10 +37,10 @@ async function youtubeGet(
 ): Promise<ApiResult> {
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey) {
-    return { ok: false, error: "YOUTUBE_API_KEY is not set" };
+    return { ok: false, error: YOUTUBE.errors.missingApiKey };
   }
 
-  const url = new URL(`https://www.googleapis.com/youtube/v3/${path}`);
+  const url = new URL(`${YOUTUBE.apiBaseUrl}/${path}`);
   for (const [key, value] of Object.entries(params)) {
     url.searchParams.set(key, value);
   }
@@ -58,7 +61,8 @@ async function youtubeGet(
   } catch (error) {
     return {
       ok: false,
-      error: error instanceof Error ? error.message : "YouTube fetch failed",
+      error:
+        error instanceof Error ? error.message : YOUTUBE.errors.fetchFailed,
     };
   }
 }
@@ -77,7 +81,7 @@ function toYouTubeItem(
     platform: "youtube",
     identity,
     title: snippet?.title ?? "Untitled",
-    url: `https://www.youtube.com/watch?v=${videoId}`,
+    url: YOUTUBE.watchUrl(videoId),
     thumbnailUrl: snippet?.thumbnails?.medium?.url,
     publishedAt: snippet?.publishedAt,
   };
@@ -91,9 +95,9 @@ async function fetchLongFormLatest(
   if (!playlistId) return [];
 
   const playlist = await youtubeGet("playlistItems", {
-    part: "snippet,contentDetails",
+    part: YOUTUBE.fields.playlistItems,
     playlistId,
-    maxResults: LATEST_LIMIT,
+    maxResults: String(SOCIAL_LATEST_LIMIT),
   });
 
   if (!playlist.ok) {
@@ -131,10 +135,10 @@ async function fetchSearchLatest(
   channelId: string,
 ): Promise<SocialContentItem[]> {
   const result = await youtubeGet("search", {
-    part: "snippet",
+    part: YOUTUBE.fields.search,
     channelId,
     order: "date",
-    maxResults: LATEST_LIMIT,
+    maxResults: String(SOCIAL_LATEST_LIMIT),
     type: "video",
   });
 
@@ -169,7 +173,7 @@ export async function fetchYouTubeEnrichment(
   if (!process.env.YOUTUBE_API_KEY || !channelId) return null;
 
   const result = await youtubeGet("channels", {
-    part: "statistics,snippet",
+    part: YOUTUBE.fields.channel,
     id: channelId,
   });
 
@@ -185,7 +189,7 @@ export async function fetchYouTubeEnrichment(
   };
   const item = data.items?.[0];
   if (!item) {
-    return fallbackEnrichment(`No YouTube channel found for id ${channelId}`);
+    return fallbackEnrichment(YOUTUBE.errors.channelNotFound(channelId));
   }
 
   const subscribers = Number(item.statistics?.subscriberCount);

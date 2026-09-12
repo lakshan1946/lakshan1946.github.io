@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSocialPayload } from "@/lib/social/adapters";
+import { SOCIAL_CACHE } from "@/lib/social/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -8,8 +9,7 @@ export async function GET() {
     const payload = await getSocialPayload();
     return NextResponse.json(payload, {
       headers: {
-        // Short browser cache; revalidate often so local env changes show up.
-        "Cache-Control": "private, max-age=60, stale-while-revalidate=300",
+        "Cache-Control": `private, max-age=${SOCIAL_CACHE.apiMaxAgeSeconds}, stale-while-revalidate=${SOCIAL_CACHE.apiStaleWhileRevalidateSeconds}`,
       },
     });
   } catch {

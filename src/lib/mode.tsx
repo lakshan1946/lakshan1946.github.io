@@ -15,6 +15,7 @@ import {
   type Dimension,
   type SiteMode,
 } from "@/content";
+import { SITE } from "@/lib/constants";
 
 type ModeContextValue = {
   mode: SiteMode;
@@ -92,7 +93,10 @@ export function useMode() {
 
 export function withMode(href: string, mode: SiteMode): string {
   if (mode === "person") return href;
-  const url = new URL(href, "https://lakshan.me");
+  const url = new URL(
+    href,
+    process.env.NEXT_PUBLIC_SITE_URL ?? SITE.defaultUrl,
+  );
   url.searchParams.set("mode", mode);
   return `${url.pathname}${url.search}`;
 }

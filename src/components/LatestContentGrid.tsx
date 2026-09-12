@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { CreatorIdentity } from "@/content";
+import { SOCIAL_CACHE } from "@/lib/social/constants";
 
 type ContentItem = {
   id: string;
@@ -30,7 +31,7 @@ export function LatestContentGrid({
   const { data = [], isLoading } = useQuery({
     queryKey: ["social-latest"],
     queryFn: fetchLatest,
-    staleTime: 5 * 60 * 1000,
+    staleTime: SOCIAL_CACHE.clientStaleMs,
   });
 
   const items = identity
