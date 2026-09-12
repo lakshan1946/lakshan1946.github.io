@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { CreatorIdentity, SocialPlatform } from "@/content";
 import { PlatformIcon, platformLabel } from "@/components/PlatformIcon";
+import { ContentCardSkeleton } from "@/components/Skeleton";
 import { SOCIAL_CACHE } from "@/lib/social/constants";
 
 type ContentItem = {
@@ -44,7 +45,19 @@ export function LatestContentGrid({
     : data;
 
   if (isLoading) {
-    return <p className="text-sm text-muted">Loading latest content…</p>;
+    return (
+      <ul
+        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        aria-busy="true"
+        aria-label="Loading latest content"
+      >
+        {Array.from({ length: 3 }, (_, i) => (
+          <li key={`content-skel-${i}`}>
+            <ContentCardSkeleton />
+          </li>
+        ))}
+      </ul>
+    );
   }
 
   if (items.length === 0) {
