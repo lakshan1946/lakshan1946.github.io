@@ -14,7 +14,7 @@ export function BuildTimeline() {
           </p>
           <h3 className="mt-1 text-xl tracking-tight">
             {item.title}{" "}
-            <span className="text-muted">· {item.organization}</span>
+            <span className="text-muted">at {item.organization}</span>
           </h3>
           <p className="mt-2 max-w-2xl text-muted">{item.summary}</p>
           {item.highlights && item.highlights.length > 0 && (

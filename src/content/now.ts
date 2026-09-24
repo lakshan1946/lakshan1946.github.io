@@ -7,7 +7,7 @@ export const nowItems: NowItem[] = [
   nowItemSchema.parse({
     category: "building",
     label: "Building",
-    detail: "Product engineering at iVedha — BotNEX, AgentNEX, and related platforms.",
+    detail: "TrustNEX and CloudNEX at iVedha, alongside earlier BotNEX and AgentNEX work.",
     updatedAt: "2026-09-24",
   }),
   nowItemSchema.parse({

@@ -61,6 +61,7 @@ export const projectSchema = z.object({
   stack: z.array(z.string()),
   outcomes: z.array(z.string()),
   architectureNotes: z.string().optional(),
+  practices: z.array(z.string()).optional(),
   links: z
     .array(
       z.object({

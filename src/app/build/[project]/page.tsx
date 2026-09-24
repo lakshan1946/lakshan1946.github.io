@@ -41,54 +41,97 @@ export default async function ProjectPage({ params }: Props) {
         </p>
       )}
 
-      <dl className="grid gap-8 border-t border-border pt-8 md:grid-cols-2">
-        <div>
-          <dt className="text-xs uppercase tracking-[0.16em] text-muted">Role</dt>
-          <dd className="mt-2">{project.role}</dd>
-        </div>
-        <div>
-          <dt className="text-xs uppercase tracking-[0.16em] text-muted">Stack</dt>
-          <dd className="mt-2 flex flex-wrap gap-2">
-            {project.stack.map((t) => (
-              <span
-                key={t}
-                className="rounded-full border border-border px-2.5 py-0.5 text-xs"
-              >
-                {t}
-              </span>
-            ))}
-          </dd>
-        </div>
-      </dl>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-border pt-6">
+        <p className="text-sm text-foreground">{project.role}</p>
+        <ul className="flex flex-wrap gap-2">
+          {project.stack.map((tech) => (
+            <li
+              key={tech}
+              className="rounded-full border border-border px-2.5 py-0.5 text-xs text-muted"
+            >
+              {tech}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <div className="mt-10 space-y-6 text-base leading-relaxed">
-        <section>
-          <h2 className="text-xl tracking-tight">Problem</h2>
-          <p className="mt-2 text-muted">{project.problem}</p>
+      <div className="mt-8 grid gap-3 md:grid-cols-2">
+        <section className="border border-border bg-surface p-5 md:p-6">
+          <h2 className="text-xs uppercase tracking-[0.16em] text-accent">
+            Problem
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-foreground/90 md:text-base">
+            {project.problem}
+          </p>
         </section>
-        <section>
-          <h2 className="text-xl tracking-tight">Solution</h2>
-          <p className="mt-2 text-muted">{project.solution}</p>
-        </section>
-        <section>
-          <h2 className="text-xl tracking-tight">Contribution</h2>
-          <p className="mt-2 text-muted">{project.contribution}</p>
-        </section>
-        {project.architectureNotes && (
-          <section>
-            <h2 className="text-xl tracking-tight">Architecture notes</h2>
-            <p className="mt-2 text-muted">{project.architectureNotes}</p>
-          </section>
-        )}
-        <section>
-          <h2 className="text-xl tracking-tight">Outcomes</h2>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-muted">
-            {project.outcomes.map((o) => (
-              <li key={o}>{o}</li>
-            ))}
-          </ul>
+        <section className="border border-border bg-surface p-5 md:p-6">
+          <h2 className="text-xs uppercase tracking-[0.16em] text-accent">
+            Solution
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-foreground/90 md:text-base">
+            {project.solution}
+          </p>
         </section>
       </div>
+
+      <section className="mt-3 border border-border bg-surface p-5 md:p-6">
+        <h2 className="text-xs uppercase tracking-[0.16em] text-accent">
+          Contribution
+        </h2>
+        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-foreground/90 md:text-base">
+          {project.contribution}
+        </p>
+        {project.architectureNotes && (
+          <p className="mt-4 max-w-3xl border-t border-border pt-4 text-sm leading-relaxed text-muted">
+            {project.architectureNotes}
+          </p>
+        )}
+      </section>
+
+      {project.practices && project.practices.length > 0 && (
+        <section className="mt-12" aria-labelledby="practices-heading">
+          <h2
+            id="practices-heading"
+            className="text-2xl tracking-tight md:text-3xl"
+          >
+            Engineering practices
+          </h2>
+          <ol className="mt-6 grid gap-3 sm:grid-cols-2">
+            {project.practices.map((practice, index) => (
+              <li
+                key={practice}
+                className="border border-border bg-surface p-5"
+              >
+                <p className="text-xs uppercase tracking-[0.16em] text-accent">
+                  {String(index + 1).padStart(2, "0")}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-foreground/90">
+                  {practice}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      <section className="mt-12" aria-labelledby="outcomes-heading">
+        <h2
+          id="outcomes-heading"
+          className="text-2xl tracking-tight md:text-3xl"
+        >
+          Outcomes
+        </h2>
+        <ul className="mt-6 grid gap-3 md:grid-cols-2">
+          {project.outcomes.map((outcome) => (
+            <li
+              key={outcome}
+              className="border-t border-border pt-4 text-sm leading-relaxed text-muted md:text-base"
+            >
+              {outcome}
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {project.links && project.links.length > 0 && (
         <ul className="mt-10 flex flex-wrap gap-4 text-sm">

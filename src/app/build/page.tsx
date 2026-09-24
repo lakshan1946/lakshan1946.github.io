@@ -9,7 +9,7 @@ import { createMetadata } from "@/lib/seo";
 export const metadata = createMetadata({
   title: "BUILD",
   description:
-    "Engineering experience, projects, and skills — internship and shipped product work by Lakshan Madhusanka.",
+    "Engineering experience, projects, and skills — full-time product work and internship delivery by Lakshan Madhusanka.",
   path: "/build",
 });
 
@@ -17,12 +17,18 @@ const skills = [
   "React",
   "Next.js",
   "TypeScript",
+  "Vite",
+  "TanStack Query",
   "Redux",
   "Tailwind",
   "Material UI",
+  "Node.js",
   "Django",
   "FastAPI",
   "Python",
+  "PostgreSQL",
+  "Drizzle",
+  "Zod",
   "Rust",
   "REST APIs",
   "WebSockets",
@@ -37,7 +43,7 @@ export default function BuildPage() {
     <PageShell
       eyebrow="Engineering"
       title="BUILD"
-      description="Internship and shipped product work — experience, projects, and the skills behind them. Built for recruiters who arrive from a CV."
+      description="Full-time product work and the internship behind it — experience, projects, and the skills behind them. Built for recruiters who arrive from a CV."
     >
       <section aria-labelledby="skills-heading" className="mb-12 md:mb-16">
         <h2

@@ -3,36 +3,31 @@ import type { Project } from "@/content";
 
 export function ProjectShowcase({
   projects,
-  detailed = false,
 }: {
   projects: Project[];
   detailed?: boolean;
 }) {
   return (
-    <ul className="space-y-10">
+    <ul className="grid gap-3 md:grid-cols-2">
       {projects.map((project) => (
-        <li
-          key={project.slug}
-          className="grid gap-4 border-t border-border pt-8 md:grid-cols-[1fr_1.4fr]"
-        >
-          <div>
-            <p className="text-xs uppercase tracking-[0.16em] text-muted">
+        <li key={project.slug}>
+          <Link
+            href={`/build/${project.slug}`}
+            className="flex h-full flex-col border border-border bg-surface p-5 transition-colors hover:border-accent/50 md:p-6"
+          >
+            <p className="text-xs uppercase tracking-[0.16em] text-accent">
               {project.role}
               {project.placeholder && (
                 <span className="placeholder-tag">Placeholder</span>
               )}
             </p>
-            <h3 className="mt-2 text-2xl tracking-tight md:text-3xl">
-              <Link
-                href={`/build/${project.slug}`}
-                className="hover:text-accent"
-              >
-                {project.title}
-              </Link>
-            </h3>
-            <p className="mt-2 text-muted">{project.tagline}</p>
+            <h3 className="mt-2 text-2xl tracking-tight">{project.title}</h3>
+            <p className="mt-1 text-sm text-muted">{project.tagline}</p>
+            <p className="mt-4 text-sm leading-relaxed text-foreground/90">
+              {project.problem}
+            </p>
             <ul className="mt-4 flex flex-wrap gap-2">
-              {project.stack.map((tech) => (
+              {project.stack.slice(0, 6).map((tech) => (
                 <li
                   key={tech}
                   className="rounded-full border border-border px-2.5 py-0.5 text-xs text-muted"
@@ -41,37 +36,8 @@ export function ProjectShowcase({
                 </li>
               ))}
             </ul>
-          </div>
-          <div className="space-y-3 text-sm leading-relaxed md:text-base">
-            <p>
-              <span className="font-medium">Problem. </span>
-              {project.problem}
-            </p>
-            {detailed && (
-              <>
-                <p>
-                  <span className="font-medium">Solution. </span>
-                  {project.solution}
-                </p>
-                <p>
-                  <span className="font-medium">Contribution. </span>
-                  {project.contribution}
-                </p>
-              </>
-            )}
-            {!detailed && (
-              <p>
-                <span className="font-medium">Contribution. </span>
-                {project.contribution}
-              </p>
-            )}
-            <Link
-              href={`/build/${project.slug}`}
-              className="inline-flex text-sm text-accent underline-offset-4 hover:underline"
-            >
-              Open case study →
-            </Link>
-          </div>
+            <span className="mt-5 text-sm text-accent">Open case study →</span>
+          </Link>
         </li>
       ))}
     </ul>
