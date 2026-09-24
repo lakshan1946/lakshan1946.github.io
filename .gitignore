@@ -45,3 +45,4 @@ next-env.d.ts
 # product / planning docs (keep out of the public repo)
 *.docx
 Lakshan_Personal_Portfolio_Cursor_Specification.docx
+docs/*.pdf

@@ -2,38 +2,38 @@ import { capabilitySchema, type Capability } from "./schemas";
 
 export const capabilities: Capability[] = [
   capabilitySchema.parse({
-    id: "full-stack",
-    label: "Full-stack systems",
-    description:
-      "Connecting product interfaces to reliable backend services end to end.",
-    relatedProjectSlugs: ["trustnex", "botnex"],
-  }),
-  capabilitySchema.parse({
     id: "interfaces",
     label: "Product interfaces",
     description:
-      "Building clear, usable product surfaces for complex security and compliance workflows.",
-    relatedProjectSlugs: ["botnex", "trustnex"],
+      "Building clear React and Next.js surfaces for scan workflows, dashboards, and device administration.",
+    relatedProjectSlugs: ["botnex", "agentnex"],
   }),
   capabilitySchema.parse({
     id: "backend",
     label: "Backend services",
     description:
-      "Designing APIs and service boundaries that support real operational workflows.",
-    relatedProjectSlugs: ["botnex"],
+      "Working with Django and FastAPI APIs that power reporting, scheduling, and device inventory.",
+    relatedProjectSlugs: ["botnex", "agentnex"],
   }),
   capabilitySchema.parse({
-    id: "cloud",
-    label: "Cloud infrastructure",
+    id: "realtime",
+    label: "Real-time systems",
     description:
-      "Deploying and operating applications with cloud-aware constraints and reliability in mind.",
-    relatedProjectSlugs: ["trustnex", "botnex"],
+      "Keeping scan progress and device state visible with WebSockets and live UI updates.",
+    relatedProjectSlugs: ["botnex", "agentnex"],
   }),
   capabilitySchema.parse({
-    id: "automation",
-    label: "Automation",
+    id: "containers",
+    label: "Cloud and containers",
     description:
-      "Turning repetitive security and compliance work into dependable automated flows.",
-    relatedProjectSlugs: ["trustnex"],
+      "Running and integrating Dockerized services so local product work matches how systems ship.",
+    relatedProjectSlugs: ["botnex", "agentnex"],
+  }),
+  capabilitySchema.parse({
+    id: "security-product",
+    label: "Security product engineering",
+    description:
+      "Shipping assessment and device-control features with attention to auth, roles, and public-safe delivery.",
+    relatedProjectSlugs: ["botnex", "agentnex"],
   }),
 ];

@@ -9,9 +9,26 @@ import { createMetadata } from "@/lib/seo";
 export const metadata = createMetadata({
   title: "BUILD",
   description:
-    "Engineering work by Lakshan Madhusanka — experience, projects, and technical capabilities.",
+    "Engineering experience, projects, and skills — internship and shipped product work by Lakshan Madhusanka.",
   path: "/build",
 });
+
+const skills = [
+  "React",
+  "Next.js",
+  "TypeScript",
+  "Redux",
+  "Tailwind",
+  "Material UI",
+  "Django",
+  "FastAPI",
+  "Python",
+  "Rust",
+  "REST APIs",
+  "WebSockets",
+  "Docker",
+  "Yup",
+];
 
 export default function BuildPage() {
   const projects = getPublishedProjects();
@@ -20,8 +37,27 @@ export default function BuildPage() {
     <PageShell
       eyebrow="Engineering"
       title="BUILD"
-      description="Things actually built, shipped, improved, or researched — not a résumé clone."
+      description="Internship and shipped product work — experience, projects, and the skills behind them. Built for recruiters who arrive from a CV."
     >
+      <section aria-labelledby="skills-heading" className="mb-12 md:mb-16">
+        <h2
+          id="skills-heading"
+          className="text-xs uppercase tracking-[0.16em] text-muted"
+        >
+          Skills in use
+        </h2>
+        <ul className="mt-4 flex flex-wrap gap-2">
+          {skills.map((skill) => (
+            <li
+              key={skill}
+              className="rounded-full border border-border px-3 py-1 text-sm text-foreground/90"
+            >
+              {skill}
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <section aria-labelledby="experience-heading" className="space-y-6">
         <h2 id="experience-heading" className="text-2xl tracking-tight md:text-3xl">
           Work experience
